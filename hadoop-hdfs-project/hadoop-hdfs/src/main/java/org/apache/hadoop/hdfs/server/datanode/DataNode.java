@@ -2033,12 +2033,15 @@ public class DataNode extends Configured
     return blockScanner;
   }
 
-
   public static void secureMain(String args[], SecureResources resources) {
+	  secureMain(args, resources, null);
+  }
+  
+  public static void secureMain(String args[], SecureResources resources, Configuration conf) {
     int errorCode = 0;
     try {
       StringUtils.startupShutdownMessage(DataNode.class, args, LOG);
-      DataNode datanode = createDataNode(args, null, resources);
+      DataNode datanode = createDataNode(args, conf, resources);
       if (datanode != null) {
         datanode.join();
       } else {

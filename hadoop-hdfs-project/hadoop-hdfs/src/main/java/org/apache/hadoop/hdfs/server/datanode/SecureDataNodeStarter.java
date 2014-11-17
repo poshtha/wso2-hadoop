@@ -59,13 +59,13 @@ public class SecureDataNodeStarter implements Daemon {
   
   private String [] args;
   private SecureResources resources;
-
+  private Configuration conf;     // WSO2: global conf variable for configuration
   @Override
   public void init(DaemonContext context) throws Exception {
     System.err.println("Initializing secure datanode resources");
     // Create a new HdfsConfiguration object to ensure that the configuration in
     // hdfs-site.xml is picked up.
-    Configuration conf = new HdfsConfiguration();
+    //Configuration conf = new HdfsConfiguration();    // WSO2 : removed since 'setConfiguration' does the same
     
     // Stash command-line arguments for regular datanode
     args = context.getArguments();
@@ -75,12 +75,15 @@ public class SecureDataNodeStarter implements Daemon {
   @Override
   public void start() throws Exception {
     System.err.println("Starting regular datanode initialization");
-    DataNode.secureMain(args, resources);
+    DataNode.secureMain(args, resources,conf);
   }
 
   @Override public void destroy() {}
   @Override public void stop() throws Exception { /* Nothing to do */ }
 
+  public void setConfiguration(HdfsConfiguration config){  // WSO2: added to manually add custom config file
+	  conf = config;
+  }
   /**
    * Acquire privileged resources (i.e., the privileged ports) for the data
    * node. The privileged resources consist of the port of the RPC server and
