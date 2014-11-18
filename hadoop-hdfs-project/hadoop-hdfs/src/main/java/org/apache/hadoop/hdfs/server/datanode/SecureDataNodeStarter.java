@@ -75,7 +75,7 @@ public class SecureDataNodeStarter implements Daemon {
   @Override
   public void start() throws Exception {
     System.err.println("Starting regular datanode initialization");
-    DataNode.secureMain(args, resources,conf);
+    DataNode.secureMain(args, resources, conf);
   }
 
   @Override public void destroy() {}
