@@ -2033,10 +2033,18 @@ public class DataNode extends Configured
     return blockScanner;
   }
 
+  
+  /**
+   * WSO2: New method 'secureMain(String args[], SecureResources resources)'
+   */
+  
   public static void secureMain(String args[], SecureResources resources) {
 	  secureMain(args, resources, null);
   }
   
+  /**
+   * WSO2: Changed the method signature to 'secureMain(String args[], SecureResources resources, Configuration conf)'
+   */
   public static void secureMain(String args[], SecureResources resources, Configuration conf) {
     int errorCode = 0;
     try {
