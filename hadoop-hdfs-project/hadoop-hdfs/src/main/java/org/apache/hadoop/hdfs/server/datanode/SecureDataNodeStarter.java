@@ -22,6 +22,8 @@ import java.nio.channels.ServerSocketChannel;
 
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.hdfs.DFSUtil;
@@ -42,6 +44,8 @@ public class SecureDataNodeStarter implements Daemon {
   /**
    * Stash necessary resources needed for datanode operation in a secure env.
    */
+  public static final Log LOG = LogFactory.getLog(SecureDataNodeStarter.class);
+
   public static class SecureResources {
     private final ServerSocket streamingSocket;
     private final Connector listener;
@@ -62,7 +66,7 @@ public class SecureDataNodeStarter implements Daemon {
   private Configuration conf;     // WSO2: global conf variable for configuration
   @Override
 	public void init(DaemonContext context) throws Exception {
-		System.err.println("Initializing secure datanode resources");
+		LOG.info("Initializing secure datanode resources");
 		// Create a new HdfsConfiguration object to ensure that the
 		// configuration in
 		// hdfs-site.xml is picked up.
@@ -76,7 +80,7 @@ public class SecureDataNodeStarter implements Daemon {
 
   @Override
   public void start() throws Exception {
-    System.err.println("Starting regular datanode initialization");
+    LOG.info("Starting regular datanode initialization");
     DataNode.secureMain(args, resources, conf);
   }
 
@@ -125,7 +129,7 @@ public class SecureDataNodeStarter implements Daemon {
         "Cannot start secure datanode with unprivileged RPC ports");
     }
 
-    System.err.println("Opened streaming server at " + streamingAddr);
+      LOG.info("Opened streaming server at " + streamingAddr);
 
     // Bind a port for the web server. The code intends to bind HTTP server to
     // privileged port only, as the client can authenticate the server using
@@ -142,14 +146,14 @@ public class SecureDataNodeStarter implements Daemon {
         throw new RuntimeException("Unable to bind on specified info port in secure " +
             "context. Needed " + streamingAddr.getPort() + ", got " + ss.getLocalPort());
       }
-      System.err.println("Successfully obtained privileged resources (streaming port = "
+      LOG.info("Successfully obtained privileged resources (streaming port = "
           + ss + " ) (http listener port = " + listener.getConnection() +")");
 
       if (listener.getPort() > 1023 && isSecure) {
         throw new RuntimeException(
             "Cannot start secure datanode with unprivileged HTTP ports");
       }
-      System.err.println("Opened info server at " + infoSocAddr);
+      LOG.info("Opened info server at " + infoSocAddr);
     }
 
     return new SecureResources(ss, listener);
